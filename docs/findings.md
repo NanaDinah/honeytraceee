@@ -96,8 +96,8 @@ Alert counts are inflated by repeating bots, so the source-IP column is the bett
 ## Planned additions
 
 - Country and network-owner breakdown (GeoIP)
-- Rule for staging scripts with `chmod +x` (T1059.004 Unix Shell)
-- Rule for network-configuration discovery (T1016)
+- Rule HT-004 for staging scripts with `chmod +x` (T1222.002)
+- Rule HT-005 for network-configuration discovery (T1016)
 - Charts: connections per day and per hour
 
 ## Conclusions
