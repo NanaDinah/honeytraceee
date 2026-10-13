@@ -1,10 +1,13 @@
 # 🍯 HoneyTrace: SSH Honeypot & Threat Detection Pipeline
 
+
 > An internet-facing SSH honeypot on AWS that captures real attacker behavior, turns raw logs into structured intelligence, and maps what it sees to MITRE ATT&CK.
 
 ![status](https://img.shields.io/badge/status-in%20progress-yellow)
 ![java](https://img.shields.io/badge/java-21-orange)
 ![license](https://img.shields.io/badge/license-MIT-green)
+![CI](https://github.com/NanaDinah/honeytraceee/actions/workflows/ci.yml/badge.svg)
+
 
 ---
 
