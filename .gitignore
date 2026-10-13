@@ -16,3 +16,11 @@ target/
 cowrie-env/
 etc/
 var/
+data/raw/
+*.log
+*.pem
+*.key
+.env
+id_*
+data/*.mmdb
+GeoLite2*.mmdb
