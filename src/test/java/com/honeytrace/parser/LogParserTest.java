@@ -57,6 +57,18 @@ class LogParserTest {
     }
 
     @Test
+    void parsesFileUploadFields() {
+        String line = "{\"eventid\":\"cowrie.session.file_upload\",\"session\":\"abc123\","
+                + "\"src_ip\":\"203.0.113.7\",\"filename\":\"tool.bin\","
+                + "\"shasum\":\"deadbeef\",\"timestamp\":\"2026-10-13T05:47:57.940980Z\"}";
+
+        CowrieEvent event = LogParser.parseLine(line).orElseThrow();
+
+        assertEquals("tool.bin", event.filename());
+        assertEquals("deadbeef", event.shasum());
+    }
+
+    @Test
     void badTimestampGivesNullTime() {
         String line = "{\"eventid\":\"cowrie.session.connect\",\"timestamp\":\"not-a-date\"}";
         assertNull(LogParser.parseLine(line).orElseThrow().time());

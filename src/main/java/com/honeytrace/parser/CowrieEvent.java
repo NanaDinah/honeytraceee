@@ -21,7 +21,9 @@ public record CowrieEvent(
         @JsonProperty("username") String username,
         @JsonProperty("password") String password,
         @JsonProperty("input") String input,
-        @JsonProperty("message") String message) {
+        @JsonProperty("message") String message,
+        @JsonProperty("filename") String filename,
+        @JsonProperty("shasum") String shasum) {
 
     /** Parsed timestamp, or null if missing or malformed. */
     public Instant time() {

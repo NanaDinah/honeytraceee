@@ -14,16 +14,22 @@ class DetectionRulesTest {
     // 203.0.113.0/24 is a documentation range, so these are not real attacker IPs.
     private static CowrieEvent command(String input) {
         return new CowrieEvent("cowrie.command.input", "s1", "203.0.113.7", 4000,
-                "2026-10-08T10:36:11.811108Z", null, null, input, null);
+                "2026-10-08T10:36:11.811108Z", null, null, input, null, null, null);
     }
 
     private static CowrieEvent login(String eventId, String user, String pass) {
         return new CowrieEvent(eventId, "s1", "203.0.113.7", 4000,
-                "2026-10-08T10:36:11.140040Z", user, pass, null, null);
+                "2026-10-08T10:36:11.140040Z", user, pass, null, null, null, null);
+    }
+
+    private static CowrieEvent upload(String eventId, String filename, String sha) {
+        return new CowrieEvent(eventId, "s1", "203.0.113.7", 4000,
+                "2026-10-13T05:47:57.940980Z", null, null, null, null, filename, sha);
     }
 
     private final SystemDiscoveryRule discovery = new SystemDiscoveryRule();
     private final DefaultAccountLoginRule defaults = new DefaultAccountLoginRule();
+    private final FileUploadRule uploads = new FileUploadRule();
 
     @Test
     void flagsUnameFingerprinting() {
@@ -62,5 +68,27 @@ class DetectionRulesTest {
 
         assertTrue(alert.evidence().length() <= 200);
         assertFalse(alert.evidence().chars().anyMatch(Character::isISOControl));
+    }
+
+    @Test
+    void flagsFileUploadWithNameAndHash() {
+        Alert alert = uploads.evaluate(upload("cowrie.session.file_upload", "tool.bin", "deadbeef")).orElseThrow();
+
+        assertEquals("HT-003", alert.ruleId());
+        assertTrue(alert.technique().startsWith("T1105"));
+        assertEquals("file=tool.bin sha256=deadbeef", alert.evidence());
+    }
+
+    @Test
+    void flagsFileDownloadWithoutFilename() {
+        Alert alert = uploads.evaluate(upload("cowrie.session.file_download", null, "deadbeef")).orElseThrow();
+
+        assertEquals("file=- sha256=deadbeef", alert.evidence());
+    }
+
+    @Test
+    void uploadRuleIgnoresOtherEvents() {
+        assertFalse(uploads.evaluate(command("ls")).isPresent());
+        assertFalse(uploads.evaluate(login("cowrie.login.success", "root", "x")).isPresent());
     }
 }

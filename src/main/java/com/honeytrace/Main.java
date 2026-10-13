@@ -1,5 +1,10 @@
 package com.honeytrace;
 
+import com.honeytrace.detection.Alert;
+import com.honeytrace.detection.DefaultAccountLoginRule;
+import com.honeytrace.detection.DetectionRule;
+import com.honeytrace.detection.FileUploadRule;
+import com.honeytrace.detection.SystemDiscoveryRule;
 import com.honeytrace.parser.CowrieEvent;
 import com.honeytrace.parser.LogParser;
 
@@ -28,6 +33,7 @@ public class Main {
                 .filter(e -> e.srcIp() == null || !excluded.contains(e.srcIp()))
                 .toList();
 
+        System.out.println("Excluded sources: " + excluded);
         System.out.println("Events parsed: " + events.size());
 
         System.out.println("\nEvents by type:");
@@ -43,5 +49,15 @@ public class Main {
                 .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
                 .limit(5)
                 .forEach(e -> System.out.printf("  %-18s %d%n", e.getKey(), e.getValue()));
+
+        List<DetectionRule> rules = List.of(new SystemDiscoveryRule(), new DefaultAccountLoginRule(), new FileUploadRule());
+        List<Alert> alerts = events.stream()
+                .flatMap(ev -> rules.stream().map(r -> r.evaluate(ev)))
+                .flatMap(java.util.Optional::stream)
+                .toList();
+
+        System.out.println("\nDetection alerts: " + alerts.size());
+        alerts.forEach(a -> System.out.printf("  %s  %s  %-16s %s  [%s]%n",
+                a.time(), a.ruleId(), a.srcIp(), a.evidence(), a.technique()));
     }
 }
