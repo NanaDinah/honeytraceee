@@ -1,10 +1,8 @@
 package com.honeytrace;
 
 import com.honeytrace.detection.Alert;
-import com.honeytrace.detection.DefaultAccountLoginRule;
 import com.honeytrace.detection.DetectionRule;
-import com.honeytrace.detection.FileUploadRule;
-import com.honeytrace.detection.SystemDiscoveryRule;
+import com.honeytrace.detection.RuleSet;
 import com.honeytrace.parser.CowrieEvent;
 import com.honeytrace.parser.LogParser;
 import com.honeytrace.report.Summary;
@@ -32,8 +30,7 @@ public class Main {
                 .filter(e -> e.srcIp() == null || !excluded.contains(e.srcIp()))
                 .toList();
 
-        List<DetectionRule> rules = List.of(
-                new SystemDiscoveryRule(), new DefaultAccountLoginRule(), new FileUploadRule());
+        List<DetectionRule> rules = RuleSet.defaults();
         List<Alert> alerts = events.stream()
                 .flatMap(ev -> rules.stream().map(r -> r.evaluate(ev)))
                 .flatMap(Optional::stream)
