@@ -123,6 +123,34 @@ honeytrace/
 ## 📊 Findings
 
 *Results will be added here once enough data has been collected.*
+## Results
+
+Real data from the live honeypot, **8 to 23 October 2026** (my own test sessions excluded).
+
+| Metric | Value |
+|---|---|
+| Sessions | 1,392 |
+| Events | 4,144 |
+| Unique source IPs | 774 |
+| Countries | 83 |
+| Fake logins accepted | 133 |
+| Commands typed | 160 |
+| File transfers | 30 |
+| Detection alerts | 254 |
+
+![Report overview](docs/report-top.png)
+
+**Highlights**
+
+- Within hours of going live, scanners from around the world found the server: 774 distinct addresses from 83 countries in 15 days.
+- Most visitors are bots that fingerprint the machine first, mostly with `uname`.
+- One dropper routine (write a script, `chmod +x`, fetch a file) uses the same payload from many addresses, and now triggers my script-staging rule for 9 sources.
+- Usernames and passwords tried are the usual defaults: `root`, `admin`, `ubuntu`, `123456`.
+- Five detection rules mapped to MITRE ATT&CK produced 254 alerts.
+
+Full write-up: [docs/findings.md](docs/findings.md). The generated report with charts is [docs/report.html](docs/report.html); download it and open it in a browser. It shows no source IP addresses.
+
+Country data: [IP Geolocation by DB-IP](https://db-ip.com).
 
 | Metric | Value |
 |---|---|
